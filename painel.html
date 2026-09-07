@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Painel de Leads · BitVisionário</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#0E1420; --surface:#161E2E; --surface-2:#1D2739; --line:#26324A;
+    --gold:#E8B84B; --gold-dim:#B78F2E; --mint:#4FD1A5; --red:#f0846b;
+    --hi:#F2F5FA; --mid:#9AA7BD; --low:#657390; --radius:13px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{min-height:100%}
+  body{
+    background:radial-gradient(1200px 600px at 50% -10%, #17233a 0%, var(--ink) 55%) fixed;
+    color:var(--hi); font-family:"Inter",system-ui,sans-serif; line-height:1.5;
+    -webkit-font-smoothing:antialiased; min-height:100vh;
+  }
+  .brand{font-family:"Space Grotesk";font-weight:700;letter-spacing:.02em;font-size:17px}
+  .brand span{color:var(--gold)}
+  a{color:inherit}
+  .hidden{display:none !important}
+
+  /* ---------- LOGIN ---------- */
+  .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .login-card{
+    width:100%;max-width:380px;background:linear-gradient(180deg,var(--surface),#131b29);
+    border:1px solid var(--line);border-radius:var(--radius);padding:30px 26px;
+    box-shadow:0 24px 60px -30px rgba(0,0,0,.8);
+  }
+  .login-card .brand{margin-bottom:6px}
+  .login-card .sub{color:var(--mid);font-size:14px;margin-bottom:22px}
+  .field{margin-top:14px}
+  .field label{display:block;font-size:12.5px;color:var(--mid);margin-bottom:6px}
+  .field input{
+    width:100%;background:var(--ink);border:1px solid var(--line);border-radius:10px;
+    padding:13px 14px;color:var(--hi);font-family:inherit;font-size:15px;
+  }
+  .field input:focus{outline:none;border-color:var(--gold)}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;
+    background:var(--gold);color:#1a1406;border:none;border-radius:10px;
+    padding:13px 18px;font-family:"Space Grotesk";font-weight:600;font-size:15px;cursor:pointer;
+    transition:filter .15s;text-decoration:none;margin-top:20px;
+  }
+  .btn:hover{filter:brightness(1.06)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn.sm{width:auto;margin:0;padding:9px 14px;font-size:13.5px;border-radius:9px}
+  .btn.ghost{background:transparent;color:var(--mid);border:1px solid var(--line)}
+  .btn.ghost:hover{color:var(--hi);border-color:var(--gold-dim);filter:none}
+  .msg{color:var(--red);font-size:13px;margin-top:12px;min-height:18px}
+
+  /* ---------- APP ---------- */
+  .top{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+    padding:18px 22px;border-bottom:1px solid var(--line);background:rgba(14,20,32,.6);
+    position:sticky;top:0;backdrop-filter:blur(8px);z-index:5;
+  }
+  .top .who{color:var(--low);font-size:12.5px}
+  .top .actions{display:flex;gap:10px;align-items:center}
+  .wrap{max-width:1100px;margin:0 auto;padding:22px}
+
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+  .stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+  .stat .n{font-family:"Space Grotesk";font-weight:700;font-size:26px;line-height:1}
+  .stat .l{color:var(--mid);font-size:12.5px;margin-top:7px}
+  .stat.gold .n{color:var(--gold)}
+  .stat.mint .n{color:var(--mint)}
+
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+  .toolbar input, .toolbar select{
+    background:var(--surface);border:1px solid var(--line);border-radius:9px;
+    padding:10px 12px;color:var(--hi);font-family:inherit;font-size:14px;
+  }
+  .toolbar input{min-width:220px;flex:1}
+  .toolbar input:focus, .toolbar select:focus{outline:none;border-color:var(--gold)}
+  .spacer{flex:1}
+
+  .tablecard{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  thead th{
+    text-align:left;color:var(--mid);font-weight:600;font-size:12px;text-transform:uppercase;
+    letter-spacing:.03em;padding:13px 16px;border-bottom:1px solid var(--line);white-space:nowrap;
+  }
+  tbody td{padding:13px 16px;border-bottom:1px solid rgba(38,50,74,.5);vertical-align:top}
+  tbody tr.row{cursor:pointer}
+  tbody tr.row:hover{background:var(--surface-2)}
+  tbody tr:last-child td{border-bottom:none}
+  .name{font-weight:600}
+  .muted{color:var(--mid);font-size:13px}
+  .wa{color:var(--mint);text-decoration:none;font-size:13px}
+  .wa:hover{text-decoration:underline}
+  .badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:600;
+    font-family:"Space Grotesk";border:1px solid var(--gold-dim);color:var(--gold);background:rgba(232,184,75,.08);white-space:nowrap}
+  .badge.i{color:var(--mint);border-color:var(--mint);background:rgba(79,209,165,.08)}
+  .badge.e{color:var(--gold);}
+  .detail td{background:var(--ink);font-size:13px;color:var(--mid)}
+  .detail .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px 22px}
+  .detail b{color:var(--hi);font-weight:600}
+  .empty{padding:44px 20px;text-align:center;color:var(--low)}
+  .loading{padding:44px 20px;text-align:center;color:var(--mid)}
+  .spin{width:20px;height:20px;border:2px solid var(--line);border-top-color:var(--gold);border-radius:50%;
+    animation:spin .7s linear infinite;display:inline-block;vertical-align:middle;margin-right:8px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media(max-width:640px){
+    .hide-sm{display:none}
+    .wrap{padding:14px}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div class="login-wrap" id="loginView">
+  <div class="login-card">
+    <div class="brand">Bit<span>Visionário</span></div>
+    <div class="sub">Painel de Leads — acesso restrito</div>
+    <div class="field">
+      <label for="email">E-mail</label>
+      <input id="email" type="email" autocomplete="email" placeholder="voce@email.com" />
+    </div>
+    <div class="field">
+      <label for="senha">Senha</label>
+      <input id="senha" type="password" autocomplete="current-password" placeholder="••••••••" />
+    </div>
+    <button class="btn" id="loginBtn">Entrar</button>
+    <div class="msg" id="loginMsg"></div>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="appView" class="hidden">
+  <div class="top">
+    <div class="brand">Bit<span>Visionário</span> · Leads</div>
+    <div class="actions">
+      <span class="who" id="who"></span>
+      <button class="btn sm ghost" id="refreshBtn">Atualizar</button>
+      <button class="btn sm ghost" id="csvBtn">Exportar CSV</button>
+      <button class="btn sm ghost" id="logoutBtn">Sair</button>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="stats" id="stats"></div>
+
+    <div class="toolbar">
+      <input id="search" type="text" placeholder="Buscar por nome, e-mail ou WhatsApp…" />
+      <select id="filterPerfil">
+        <option value="">Todos os perfis</option>
+        <option value="iniciante">Iniciante Estratégico</option>
+        <option value="inconsistente">Trader Inconsistente</option>
+        <option value="evolucao">Trader em Evolução</option>
+      </select>
+    </div>
+
+    <div class="tablecard">
+      <table>
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Nome</th>
+            <th>Contato</th>
+            <th>Perfil</th>
+            <th class="hide-sm">Origem</th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          <tr><td colspan="5" class="loading"><span class="spin"></span>Carregando…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ====== CONFIG (mesma URL e anon key do quiz) ====== */
+const SB_URL  = "https://nlksbeumvzumshpftfmw.supabase.co";
+const SB_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5sa3NiZXVtdnp1bXNocGZ0Zm13Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg4MDk1MTQsImV4cCI6MjEwNDM4NTUxNH0.NIJURebOkDopyezRGaQdrmt1BM5J8PADtPD2Qnecxb0";
+const TABLE   = "leads_quiz";
+
+const sb = window.supabase.createClient(SB_URL, SB_ANON);
+
+const PERFIL_LABEL = {
+  iniciante:"Iniciante Estratégico",
+  inconsistente:"Trader Inconsistente",
+  evolucao:"Trader em Evolução",
+};
+const PERFIL_CLASS = { iniciante:"i", inconsistente:"", evolucao:"e" };
+
+let ALL = [];
+
+/* ---------- elementos ---------- */
+const el = id => document.getElementById(id);
+const loginView = el("loginView"), appView = el("appView");
+
+/* ---------- auth ---------- */
+async function boot(){
+  const { data:{ session } } = await sb.auth.getSession();
+  if(session){ showApp(session); } else { showLogin(); }
+}
+function showLogin(){ appView.classList.add("hidden"); loginView.classList.remove("hidden"); }
+function showApp(session){
+  loginView.classList.add("hidden"); appView.classList.remove("hidden");
+  el("who").textContent = session.user?.email || "";
+  loadLeads();
+}
+
+el("loginBtn").onclick = async ()=>{
+  const email = el("email").value.trim();
+  const senha = el("senha").value;
+  const msg = el("loginMsg");
+  msg.textContent = "";
+  if(!email || !senha){ msg.textContent = "Preencha e-mail e senha."; return; }
+  el("loginBtn").disabled = true; el("loginBtn").textContent = "Entrando…";
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: senha });
+  el("loginBtn").disabled = false; el("loginBtn").textContent = "Entrar";
+  if(error){ msg.textContent = "E-mail ou senha inválidos."; return; }
+  showApp(data.session);
+};
+el("senha").addEventListener("keydown", e=>{ if(e.key==="Enter") el("loginBtn").click(); });
+
+el("logoutBtn").onclick = async ()=>{ await sb.auth.signOut(); showLogin(); };
+
+/* ---------- dados ---------- */
+async function loadLeads(){
+  el("tbody").innerHTML = `<tr><td colspan="5" class="loading"><span class="spin"></span>Carregando…</td></tr>`;
+  const { data, error } = await sb.from(TABLE).select("*").order("criado_em", { ascending:false });
+  if(error){
+    el("tbody").innerHTML = `<tr><td colspan="5" class="empty">Erro ao carregar: ${error.message}</td></tr>`;
+    return;
+  }
+  ALL = data || [];
+  renderStats();
+  renderTable();
+}
+
+el("refreshBtn").onclick = loadLeads;
+
+/* ---------- stats ---------- */
+function isToday(iso){
+  if(!iso) return false;
+  const d = new Date(iso), n = new Date();
+  return d.getFullYear()===n.getFullYear() && d.getMonth()===n.getMonth() && d.getDate()===n.getDate();
+}
+function renderStats(){
+  const total = ALL.length;
+  const hoje = ALL.filter(l=>isToday(l.criado_em)).length;
+  const cont = k => ALL.filter(l=>l.perfil===k).length;
+  el("stats").innerHTML = `
+    <div class="stat gold"><div class="n">${total}</div><div class="l">Total de leads</div></div>
+    <div class="stat mint"><div class="n">${hoje}</div><div class="l">Hoje</div></div>
+    <div class="stat"><div class="n">${cont("iniciante")}</div><div class="l">Iniciante Estratégico</div></div>
+    <div class="stat"><div class="n">${cont("inconsistente")}</div><div class="l">Trader Inconsistente</div></div>
+    <div class="stat"><div class="n">${cont("evolucao")}</div><div class="l">Trader em Evolução</div></div>`;
+}
+
+/* ---------- tabela ---------- */
+function fmtDate(iso){
+  if(!iso) return "—";
+  const d = new Date(iso);
+  return d.toLocaleString("pt-BR", { day:"2-digit", month:"2-digit", year:"2-digit", hour:"2-digit", minute:"2-digit" });
+}
+function fmtZap(z){
+  if(!z) return "";
+  const d = (""+z).replace(/\D/g,"");
+  if(d.length===11) return `(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7)}`;
+  if(d.length===10) return `(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`;
+  return z;
+}
+function waLink(z){
+  const d = (""+(z||"")).replace(/\D/g,"");
+  return d ? `https://wa.me/55${d}` : "#";
+}
+function esc(s){ return (s==null?"":""+s).replace(/[&<>"]/g, c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c])); }
+
+function currentFiltered(){
+  const q = el("search").value.trim().toLowerCase();
+  const p = el("filterPerfil").value;
+  return ALL.filter(l=>{
+    if(p && l.perfil!==p) return false;
+    if(!q) return true;
+    const hay = [l.nome,l.email,l.whatsapp].map(x=>(""+(x||"")).toLowerCase()).join(" ");
+    return hay.includes(q);
+  });
+}
+
+function renderTable(){
+  const rows = currentFiltered();
+  const tb = el("tbody");
+  if(!rows.length){ tb.innerHTML = `<tr><td colspan="5" class="empty">Nenhum lead encontrado.</td></tr>`; return; }
+  tb.innerHTML = rows.map((l,idx)=>{
+    const cls = PERFIL_CLASS[l.perfil] || "";
+    const label = PERFIL_LABEL[l.perfil] || (l.perfil||"—");
+    const origem = [l.utm_source, l.utm_campaign].filter(Boolean).join(" · ") || "—";
+    const resp = l.respostas ? Object.entries(l.respostas).map(([k,v])=>`<b>${esc(k)}:</b> ${esc(v&&v.t?v.t:v)}`).join("<br>") : "—";
+    const utms = ["utm_source","utm_medium","utm_campaign","utm_content","utm_term","fbclid","gclid"]
+      .filter(k=>l[k]).map(k=>`<b>${k}:</b> ${esc(l[k])}`).join("<br>") || "—";
+    return `
+    <tr class="row" data-i="${idx}">
+      <td class="muted">${fmtDate(l.criado_em)}</td>
+      <td class="name">${esc(l.nome)||"—"}</td>
+      <td>
+        <div class="muted">${esc(l.email)||""}</div>
+        ${l.whatsapp?`<a class="wa" href="${waLink(l.whatsapp)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${esc(fmtZap(l.whatsapp))} ↗</a>`:""}
+      </td>
+      <td><span class="badge ${cls}">${esc(label)}</span></td>
+      <td class="muted hide-sm">${esc(origem)}</td>
+    </tr>
+    <tr class="detail hidden" data-d="${idx}">
+      <td colspan="5">
+        <div class="grid">
+          <div><b>Respostas</b><br>${resp}</div>
+          <div><b>Rastreamento</b><br>${utms}<br><b>página:</b> ${esc(l.pagina)||"—"}</div>
+        </div>
+      </td>
+    </tr>`;
+  }).join("");
+  tb.querySelectorAll("tr.row").forEach(tr=>{
+    tr.onclick = ()=>{
+      const d = tb.querySelector(`tr.detail[data-d="${tr.dataset.i}"]`);
+      if(d) d.classList.toggle("hidden");
+    };
+  });
+}
+
+el("search").addEventListener("input", renderTable);
+el("filterPerfil").addEventListener("change", renderTable);
+
+/* ---------- CSV ---------- */
+el("csvBtn").onclick = ()=>{
+  const rows = currentFiltered();
+  if(!rows.length){ return; }
+  const cols = ["criado_em","nome","email","whatsapp","perfil_nome","utm_source","utm_medium","utm_campaign","utm_content","utm_term","fbclid","gclid","pagina"];
+  const head = cols.join(",");
+  const body = rows.map(l=>cols.map(c=>{
+    let v = l[c]==null ? "" : (""+l[c]);
+    if(/[",\n]/.test(v)) v = '"'+v.replace(/"/g,'""')+'"';
+    return v;
+  }).join(",")).join("\n");
+  const blob = new Blob(["\ufeff"+head+"\n"+body], { type:"text/csv;charset=utf-8;" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `leads-bitvisionario-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+
+/* ---------- boot ---------- */
+boot();
+</script>
+</body>
+</html>
